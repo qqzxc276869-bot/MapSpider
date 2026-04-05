@@ -1,16 +1,22 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
+import os
+import customtkinter
+
+# Find customtkinter directory to bundle theme assets
+ctk_path = os.path.dirname(customtkinter.__file__)
+
 a = Analysis(
     ['gui_app.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[(ctk_path, 'customtkinter')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['torch', 'torchvision', 'torchaudio', 'pygame', 'scipy', 'matplotlib', 'cryptography', 'IPython', 'PIL', 'tk', 'tcl'],
     noarchive=False,
 )
 pyz = PYZ(a.pure)
@@ -21,7 +27,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='gui_app',
+    name='LeadMagnetPro',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -34,4 +40,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='app_icon.ico',
 )
