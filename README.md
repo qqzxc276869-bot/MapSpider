@@ -1,5 +1,7 @@
 # 🕸️ MapSpider - 百度地图开源客源抓取器
 
+![UI Screenshot](ui_screenshot.png)
+
 ![License](https://img.shields.io/badge/License-MIT%20or%20Study-blue.svg)
 ![Python Version](https://img.shields.io/badge/Python-3.8%2B-brightgreen)
 
