@@ -88,23 +88,27 @@ def scrape_baidu_maps(search_query: str, total_to_scrape: int = 20, log_callback
             if len(scraped_data_dict) >= total_to_scrape:
                 break
                 
-            # 翻页逻辑 - DrissionPage 找翻页特别准
-            # 只有当卡了数据获取时，或者等待了许久没抓包才考虑点击下一页
+            # 翻页逻辑 - 增强版模糊匹配
             if packet is False or empty_checks >= 1:
                 try:
-                    # 获取带有“下一页”文字的有效 a 标签
-                    next_btn = page.ele('tag:a@@text()=下一页', timeout=1)
+                    # 尝试多种匹配模式，适配百度可能出现的 "下一页", "下一页>", "下一页 >" 等情况
+                    # 使用 @text():下一页 表示包含 "下一页" 即可
+                    next_btn = page.ele('tag:a@@text():下一页', timeout=2)
+                    
                     if next_btn and "disabled" not in str(next_btn.attr("class")):
-                        log(f"🔄 当前页拦截完毕，尝试前往第 {page_num+1} 页...")
-                        # 让页面滚动到底部触发渲染
+                        log(f"🔄 当前页数据已捕获，尝试点击下一页 (第 {page_num+1} 页)...")
+                        
+                        # 确保滚动到侧边栏底部以触发元素显示
                         page.scroll.to_bottom()
                         time.sleep(1)
-                        next_btn.click()
+                        
+                        # 点击翻页
+                        next_btn.click(by_js=True) # 使用 JS 点击更稳，防止被遮挡
                         page_num += 1
                         time.sleep(2)
                     else:
-                        if empty_checks >= 3:
-                            log("✅ 到底了，没有下一页按钮，自动结束采集。")
+                        if empty_checks >= 2:
+                            log("✅ 采集目标已完成或没有更多分页。")
                             break
                 except Exception as e:
                     pass
